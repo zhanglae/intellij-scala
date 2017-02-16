@@ -1,21 +1,13 @@
 package org.jetbrains.plugins.scala.lang.extensions.api
 
+import org.jetbrains.plugins.scala.lang.extensions.api.base.IdeaProject
+
 /**
   * @author mutcianm
   * @since 09.02.17.
   */
 abstract class BaseApiProvider {
   def version: Int
-
-  object Inspection {
-    //TODO
-  }
-
-  object Intention {
-    //TODO
-  }
-
-  object Project {
-    //TODO
-  }
+  
+  def getProject: IdeaProject
 }

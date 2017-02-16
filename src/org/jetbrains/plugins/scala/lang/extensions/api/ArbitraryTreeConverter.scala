@@ -6,6 +6,6 @@ import scala.meta.Tree
   * @author mutcianm
   * @since 09.02.17.
   */
-trait ExtensionContributorBase {
-  def isApplicable(elementType: Class[_ <: Tree], predicate: (Tree => Boolean) = _ => true): Boolean
+abstract class ArbitraryTreeConverter extends TreeConverterBase {
+  def convert(tree: Tree): Tree
 }
