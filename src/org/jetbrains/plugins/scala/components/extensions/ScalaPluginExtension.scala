@@ -1,7 +1,7 @@
-package org.jetbrains.plugins.scala.lang.extensions
+package org.jetbrains.plugins.scala.components.extensions
 
-import org.jetbrains.plugins.scala.lang.extensions.api.base.MigrationDescriptor
-import org.jetbrains.plugins.scala.lang.extensions.api.{BaseApiProvider, InspectionConverter, ProjectMigrator, ArbitraryTreeConverter}
+import org.jetbrains.plugins.scala.components.extensions.api.base.MigrationDescriptor
+import org.jetbrains.plugins.scala.components.extensions.api.{BaseApiProvider, InspectionConverter, ProjectMigrator, ArbitraryTreeConverter}
 
 /**
   * @author mutcianm

@@ -1,4 +1,4 @@
-package org.jetbrains.plugins.scala.lang.extensions
+package org.jetbrains.plugins.scala.components.extensions
 
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project

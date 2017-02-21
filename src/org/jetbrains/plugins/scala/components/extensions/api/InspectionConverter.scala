@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.scala.lang.extensions.api
+package org.jetbrains.plugins.scala.components.extensions.api
 
-import org.jetbrains.plugins.scala.lang.extensions.api.base.InspectionProblemsHolder
+import org.jetbrains.plugins.scala.components.extensions.api.base.InspectionProblemsHolder
 
 import scala.meta.Tree
 

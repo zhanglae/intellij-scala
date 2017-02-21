@@ -1,4 +1,4 @@
-package org.jetbrains.plugins.scala.lang.extensions.api.base
+package org.jetbrains.plugins.scala.components.extensions.api.base
 
 import scala.meta._
 

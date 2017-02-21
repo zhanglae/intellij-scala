@@ -1,4 +1,4 @@
-package org.jetbrains.plugins.scala.lang.extensions.api
+package org.jetbrains.plugins.scala.components.extensions.api
 
 import scala.meta.Tree
 

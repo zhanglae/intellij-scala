@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.scala.lang.extensions.api
+package org.jetbrains.plugins.scala.components.extensions.api
 
-import org.jetbrains.plugins.scala.lang.extensions.api.base.{IdeaProject, SourceFile}
+import org.jetbrains.plugins.scala.components.extensions.api.base.{IdeaProject, SourceFile}
 
 /**
   * User: Dmitry.Naydanov
