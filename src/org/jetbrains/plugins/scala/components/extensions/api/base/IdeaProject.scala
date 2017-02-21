@@ -6,4 +6,5 @@ package org.jetbrains.plugins.scala.components.extensions.api.base
   */
 trait IdeaProject {
   def name: String
+  def modules: Seq[IdeaModule]
 }

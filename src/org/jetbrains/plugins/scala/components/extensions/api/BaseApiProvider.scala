@@ -8,6 +8,5 @@ import org.jetbrains.plugins.scala.components.extensions.api.base.IdeaProject
   */
 abstract class BaseApiProvider {
   def version: Int
-  
   def getProject: IdeaProject
 }

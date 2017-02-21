@@ -5,5 +5,6 @@ package org.jetbrains.plugins.scala.components.extensions.api.base
   * Date: 16.02.17.
   */
 trait LibraryDependency {
+  def name: String
   def version: LibraryVersion
 }

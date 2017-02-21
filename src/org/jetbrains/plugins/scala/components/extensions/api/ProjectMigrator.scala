@@ -6,7 +6,7 @@ import org.jetbrains.plugins.scala.components.extensions.api.base.{IdeaProject, 
   * User: Dmitry.Naydanov
   * Date: 16.02.17.
   */
-abstract class ProjectMigrator extends TreeConverterBase {
+abstract class ProjectMigrator extends NamedExtensionComponent {
   def convertLocal(file: SourceFile)
   def convertGlobal(project: IdeaProject)
 }
