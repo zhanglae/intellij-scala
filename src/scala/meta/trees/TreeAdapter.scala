@@ -5,6 +5,7 @@ import com.intellij.psi._
 import org.jetbrains.plugins.scala.extensions.PsiElementExt
 import org.jetbrains.plugins.scala.lang.psi.api.base._
 import org.jetbrains.plugins.scala.lang.psi.api.base.patterns.ScBindingPattern
+import org.jetbrains.plugins.scala.lang.psi.api.base.types.ScTypeElement
 import org.jetbrains.plugins.scala.lang.psi.api.expr._
 import org.jetbrains.plugins.scala.lang.psi.api.statements._
 import org.jetbrains.plugins.scala.lang.psi.api.toplevel.typedef._
@@ -40,6 +41,7 @@ trait TreeAdapter {
       case t: ScAnnotation => toAnnot(t)
       case t: ScExpression => expression(Some(t)).get
       case t: p.toplevel.imports.ScImportStmt => m.Import(Seq(t.importExprs.map(imports):_*))
+      case t: ScTypeElement => toType(t)
 
       case t: PsiClass => toClass(t)
       case t: PsiMethod => t ???
