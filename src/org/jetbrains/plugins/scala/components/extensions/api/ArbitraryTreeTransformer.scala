@@ -7,7 +7,7 @@ import scala.meta.Tree
   * @since 09.02.17.
   */
 abstract class ArbitraryTreeTransformer extends NamedExtensionComponent {
-  def convert(tree: Tree): Tree
+  def transform(tree: Tree): Option[Tree]
   def context: ApplicabilityContext
-  def additionalDeclarations: Option[Tree] = None
+  def additionalDeclarations(hint: Option[Tree] = None) = None
 }
