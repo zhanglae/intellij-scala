@@ -7,12 +7,14 @@ import org.jetbrains.plugins.scala.components.extensions.api.impl.IdeaApiProvide
 import org.jetbrains.plugins.scala.components.extensions.impl.KindProjectorExtension
 import org.jetbrains.plugins.scala.lang.parser.parsing
 import org.jetbrains.plugins.scala.lang.parser.parsing.builder.ScalaPsiBuilder
-import org.jetbrains.plugins.scala.lang.psi.ScalaPsiElement
+import org.jetbrains.plugins.scala.lang.psi.{ScalaPsiElement, ScalaPsiElementImpl}
 import org.jetbrains.plugins.scala.lang.psi.api.base.types.ScParameterizedTypeElement
 import org.jetbrains.plugins.scala.lang.psi.api.expr.{ScExpression, ScMethodCall}
 import org.jetbrains.plugins.scala.lang.psi.api.toplevel.typedef.{ScClass, ScObject, ScTrait}
 import org.jetbrains.plugins.scala.lang.psi.impl.ScalaPsiElementFactory
 import org.jetbrains.plugins.scala.lang.psi.impl.base.types.ScParameterizedTypeElementImpl
+import org.jetbrains.plugins.scala.lang.psi.impl.expr.ScMethodCallImpl
+import org.jetbrains.plugins.scala.lang.psi.impl.toplevel.typedef.{ScClassImpl, ScObjectImpl, ScTraitImpl}
 
 import scala.collection.mutable
 import scala.meta._
@@ -48,7 +50,7 @@ class ScalaExtensionsManager(project: Project) extends ProjectComponent {
     for { extension <- getExtensions
           tr <- extension.transformers }
     {
-      transformersByContext(tr.context.elementType) = transformersByContext.getOrElse(tr.context.elementType, Seq.empty)
+      transformersByContext(tr.context.elementType) = transformersByContext.getOrElse(tr.context.elementType, Seq.empty) :+ tr
     }
   }
 
@@ -65,24 +67,24 @@ object ScalaExtensionsManager {
   def getInstance(project: Project): ScalaExtensionsManager = project.getComponent(classOf[ScalaExtensionsManager])
 
   val metaToPsi: Map[Class[_ <: Tree], Class[_ <: ScalaPsiElement]] = Map(
-    classOf[Tree]           -> classOf[ScalaPsiElement],
+    classOf[Tree]           -> classOf[ScalaPsiElementImpl],
     classOf[Term]           -> classOf[ScExpression],
-    classOf[Defn.Class]     -> classOf[ScClass],
-    classOf[Defn.Trait]     -> classOf[ScTrait],
-    classOf[Defn.Object]    -> classOf[ScObject],
-    classOf[Term.Apply]     -> classOf[ScMethodCall],
-    classOf[Term.ApplyType] -> classOf[ScParameterizedTypeElement]
+    classOf[Defn.Class]     -> classOf[ScClassImpl],
+    classOf[Defn.Trait]     -> classOf[ScTraitImpl],
+    classOf[Defn.Object]    -> classOf[ScObjectImpl],
+    classOf[Term.Apply]     -> classOf[ScMethodCallImpl],
+    classOf[Term.ApplyType] -> classOf[ScParameterizedTypeElementImpl]
   )
 
   val psiToMeta: Map[Class[_ <: ScalaPsiElement], Class[_ <: Tree]] = metaToPsi.map(_.swap)
 
   val psiToParse: Map[Class[_ <: ScalaPsiElement], ScalaPsiBuilder => AnyVal] = Map(
-    classOf[ScalaPsiElement]            -> parsing.CompilationUnit.parse,
-    classOf[ScExpression]               -> parsing.expressions.Expr.parse,
-    classOf[ScParameterizedTypeElementImpl] -> (x => parsing.types.Type.parse(x))
-    //    classOf[ScClass],
-    //    classOf[ScTrait],
-    //    classOf[ScObject],
-    //    classOf[ScMethodCall],
+    classOf[ScalaPsiElementImpl]  -> parsing.CompilationUnit.parse,
+    classOf[ScExpression]         -> parsing.expressions.Expr.parse,
+    classOf[ScParameterizedTypeElementImpl] -> (x => parsing.types.Type.parse(x)),
+    classOf[ScClassImpl]          -> parsing.top.ClassDef.parse,
+    classOf[ScTraitImpl]          -> parsing.top.TraitDef.parse,
+    classOf[ScObjectImpl]         -> parsing.top.ObjectDef.parse,
+    classOf[ScMethodCallImpl]     -> parsing.expressions.SimpleExpr.parse,
   )
 }
