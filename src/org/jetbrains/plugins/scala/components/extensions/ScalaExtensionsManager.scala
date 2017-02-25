@@ -2,6 +2,7 @@ package org.jetbrains.plugins.scala.components.extensions
 
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.plugins.scala.components.extensions.api.ArbitraryTreeTransformer
 import org.jetbrains.plugins.scala.components.extensions.api.impl.IdeaApiProvider
 import org.jetbrains.plugins.scala.components.extensions.impl.KindProjectorExtension
@@ -36,14 +37,17 @@ class ScalaExtensionsManager(project: Project) extends ProjectComponent {
     transformersByContext.getOrElse(psiToMeta.getOrElse(elem.getClass, classOf[Tree]), Seq.empty)
   }
 
-  def transformElement[T <: ScalaPsiElement](elem: T)(implicit tag: ClassTag[T])= {
+  def transformElement[T <: ScalaPsiElement](elem: T)(implicit tag: ClassTag[T]): Option[T] = {
     val transformers = getTransformersForElement(elem)
     val converted = converter.ideaToMeta(elem)
     val result = transformers.foldLeft(Option(converted))((res, transformer) => res.flatMap(transformer.transform))
-    val parse = psiToParse.getOrElse(tag.runtimeClass.asSubclass(classOf[ScalaPsiElement]), parsing.CompilationUnit.parse(_))
-    result.map(t =>
-      ScalaPsiElementFactory.createElementWithContext(t.toString(), elem.getContext, elem, parse)
-    ).getOrElse(elem)
+    result.flatMap(t => {
+      val fixed = t.toString().replaceAll("^", "(").replaceAll("#", ")#")
+      elem match {
+        case _: ScParameterizedTypeElement => Option(ScalaPsiElementFactory.createTypeElementFromText(fixed, elem.getContext, elem))
+        case _ => None
+      }
+    }).map(_.asInstanceOf[T])
   }
 
   private def loadExtensions(): Unit = {
@@ -78,13 +82,13 @@ object ScalaExtensionsManager {
 
   val psiToMeta: Map[Class[_ <: ScalaPsiElement], Class[_ <: Tree]] = metaToPsi.map(_.swap)
 
-  val psiToParse: Map[Class[_ <: ScalaPsiElement], ScalaPsiBuilder => AnyVal] = Map(
-    classOf[ScalaPsiElementImpl]  -> parsing.CompilationUnit.parse,
-    classOf[ScExpression]         -> parsing.expressions.Expr.parse,
-    classOf[ScParameterizedTypeElementImpl] -> (x => parsing.types.Type.parse(x)),
-    classOf[ScClassImpl]          -> parsing.top.ClassDef.parse,
-    classOf[ScTraitImpl]          -> parsing.top.TraitDef.parse,
-    classOf[ScObjectImpl]         -> parsing.top.ObjectDef.parse,
-    classOf[ScMethodCallImpl]     -> parsing.expressions.SimpleExpr.parse,
+  val psiToParse: Map[Class[_ <: ScalaPsiElement], (String, PsiElement) => ScalaPsiElement] = Map(
+//    classOf[ScalaPsiElementImpl]  -> parsing.CompilationUnit.parse,
+//    classOf[ScExpression]         -> parsing.expressions.Expr.parse,
+//    classOf[ScParameterizedTypeElementImpl] -> ((a,b) => ScalaPsiElementFactory.createTypeElementFromText(_, _, null))
+//    classOf[ScClassImpl]          -> parsing.top.ClassDef.parse,
+//    classOf[ScTraitImpl]          -> parsing.top.TraitDef.parse,
+//    classOf[ScObjectImpl]         -> parsing.top.ObjectDef.parse,
+//    classOf[ScMethodCallImpl]     -> parsing.expressions.SimpleExpr.parse
   )
 }
