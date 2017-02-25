@@ -7,4 +7,5 @@ package org.jetbrains.plugins.scala.components.extensions.api.base
 trait IdeaModule {
   def name: String
   def libraries: Seq[LibraryDependency]
+  def compilerSettings: CompilerSettings
 }
