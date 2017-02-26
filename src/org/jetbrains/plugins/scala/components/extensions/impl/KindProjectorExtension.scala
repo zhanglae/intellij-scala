@@ -15,7 +15,7 @@ class KindProjectorExtension(api: BaseApiProvider) extends ScalaPluginExtension(
   override def extensionName = "KindProjectorExtension"
   override def extensionDescription = "Support for kind projector syntax in IntelliJ IDEA"
 
-//  override def transformers = Seq(new TypeElementRewriter)
+  override def transformers = Seq(new TypeElementRewriter)
 
   class TypeElementRewriter extends ArbitraryTreeTransformer {
     override def name = "KindProjector TypeElementRewriter"
