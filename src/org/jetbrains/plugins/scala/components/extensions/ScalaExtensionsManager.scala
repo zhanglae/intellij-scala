@@ -50,6 +50,11 @@ class ScalaExtensionsManager(project: Project) extends ProjectComponent {
     }).map(_.asInstanceOf[T])
   }
 
+  def getAdditionalDeclarations[T <: ScalaPsiElement](elem: T)(implicit tag: ClassTag[T]): Seq[Tree] = {
+    val transformers = getTransformersForElement(elem)
+    transformers.flatMap(_.additionalDeclarations())
+  }
+
   private def loadExtensions(): Unit = {
     for { extension <- getExtensions
           tr <- extension.transformers }
