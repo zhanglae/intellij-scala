@@ -9,5 +9,5 @@ import scala.meta.Tree
 abstract class ArbitraryTreeTransformer extends NamedExtensionComponent {
   def transform(tree: Tree): Option[Tree]
   def context: ApplicabilityContext
-  def additionalDeclarations(hint: Option[Tree] = None) = None
+  def additionalDeclarations(hint: Option[Tree] = None): Seq[Tree] = Seq.empty
 }

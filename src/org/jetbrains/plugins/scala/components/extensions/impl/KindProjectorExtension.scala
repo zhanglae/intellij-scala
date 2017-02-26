@@ -12,11 +12,10 @@ import scala.{Seq => _}
   * @since 21.02.17.
   */
 class KindProjectorExtension(api: BaseApiProvider) extends ScalaPluginExtension(api) {
-//  implicit def RichStr(str: String): Type = Type.Name(str)
   override def extensionName = "KindProjectorExtension"
   override def extensionDescription = "Support for kind projector syntax in IntelliJ IDEA"
 
-  override def transformers = Seq(new TypeElementRewriter)
+//  override def transformers = Seq(new TypeElementRewriter)
 
   class TypeElementRewriter extends ArbitraryTreeTransformer {
     override def name = "KindProjector TypeElementRewriter"
@@ -50,10 +49,8 @@ class KindProjectorExtension(api: BaseApiProvider) extends ScalaPluginExtension(
 
     private def toTParam(tp: Type): Type.Param = tp match {
       case t:Type.Placeholder => tparam"_"
-      case n@Type.Name(value) => Type.Param(Nil, n, Nil, Type.Bounds(None, None), Nil, Nil)
+      case n:Type.Name        => Type.Param(Nil, n, Nil, Type.Bounds(None, None), Nil, Nil)
       case Type.Apply(n:Type.Name, targs) => Type.Param(Nil, n, targs.map(toTParam), Type.Bounds(None, None), Nil, Nil)
-      case other =>
-        ???
     }
 
     private def transformName(tp: Type, index: Int): Type.Param = tp match {
@@ -85,7 +82,13 @@ class KindProjectorExtension(api: BaseApiProvider) extends ScalaPluginExtension(
     }
 
 
-    override def additionalDeclarations(hint: Option[Tree] = None) = super.additionalDeclarations(None)
+    override def additionalDeclarations(hint: Option[Tree] = None) = Seq(
+      q"class Lambda",
+      q"class λ",
+      q"class ?",
+      q"class +?",
+      q"class -?"
+    )
 
     override def context = ApplicabilityContext(classOf[Term.ApplyType])
 
