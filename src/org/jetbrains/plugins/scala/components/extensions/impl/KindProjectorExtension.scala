@@ -15,42 +15,23 @@ class KindProjectorExtension(api: BaseApiProvider) extends ScalaPluginExtension(
   override def extensionName = "KindProjectorExtension"
   override def extensionDescription = "Support for kind projector syntax in IntelliJ IDEA"
 
-  override def transformers = Seq(new TypeElementRewriter)
+  override def treeTransformers = Seq(new TypeElementRewriter)
 
-  class TypeElementRewriter extends ArbitraryTreeTransformer {
+  class TypeElementRewriter extends ArbitraryTreeTransformer with KindProjectorUtils {
     override def name = "KindProjector TypeElementRewriter"
     override def description = "KindProjector TypeElementRewriter description"
     private val inlineSyntaxIds = Set("?", "+?", "-?")
-    private val functionSyntaxIds = Set("Lambda", "λ")
 
-    private def isKindProjectorEnabled = api.getProject.modules.exists(_.compilerSettings.compilerPlugins().exists(_.contains("kind-proj")))
+    private def isKindProjectorEnabled = api
+      .getProject
+      .modules
+      .exists(_.compilerSettings.compilerPlugins()
+        .exists(_.contains("kind-projector")))
 
     private def isKindProjectorInlineSyntax(tp: Tree): Boolean = tp match {
-      case Type.Name(value)         =>
-        inlineSyntaxIds.contains(value)
-      case Type.Apply(tname, tparams)    =>
-        tparams.exists(isKindProjectorInlineSyntax) ||
-          isKindProjectorInlineSyntax(tname)
-      case _                        =>
-        false
-    }
-
-    private def isKindProjectorFunctionSyntax(tp: Tree): Boolean = tp match {
-      case t"${Type.Name(value)}[$_]"   => functionSyntaxIds.contains(value)
-      case _                            => false
-    }
-
-    private def generateName(i: Int): String = {
-      //kind projector generates names the same way
-      val res = ('α' + (i % 25)).toChar.toString
-      if (i < 25) res
-      else res + (i / 25)
-    }
-
-    private def toTParam(tp: Type): Type.Param = tp match {
-      case t:Type.Placeholder => tparam"_"
-      case n:Type.Name        => Type.Param(Nil, n, Nil, Type.Bounds(None, None), Nil, Nil)
-      case Type.Apply(n:Type.Name, targs) => Type.Param(Nil, n, targs.map(toTParam), Type.Bounds(None, None), Nil, Nil)
+      case Type.Apply(tname, tparams) => tparams.exists(isKindProjectorInlineSyntax) || isKindProjectorInlineSyntax(tname)
+      case Type.Name(value)           => inlineSyntaxIds.contains(value)
+      case _                          => false
     }
 
     private def transformName(tp: Type, index: Int): Type.Param = tp match {
@@ -74,10 +55,8 @@ class KindProjectorExtension(api: BaseApiProvider) extends ScalaPluginExtension(
     }
 
     override def transform(tree: Tree): Option[Tree] = {
-      val enabled = isKindProjectorEnabled
-      val inlineSyn = isKindProjectorInlineSyntax(tree)
-      val functionSyn = isKindProjectorFunctionSyntax(tree)
-      if (enabled && inlineSyn) Some(mkInlineSyntax(tree))
+      if (isKindProjectorEnabled && isKindProjectorInlineSyntax(tree))
+        Some(mkInlineSyntax(tree))
       else None
     }
 
