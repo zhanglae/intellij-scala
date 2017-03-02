@@ -57,7 +57,7 @@ class ScalaExtensionsManager(project: Project) extends ProjectComponent {
 
   private def loadExtensions(): Unit = {
     for { extension <- getExtensions
-          tr <- extension.transformers }
+          tr <- extension.treeTransformers }
     {
       transformersByContext(tr.context.elementType) = transformersByContext.getOrElse(tr.context.elementType, Seq.empty) :+ tr
     }

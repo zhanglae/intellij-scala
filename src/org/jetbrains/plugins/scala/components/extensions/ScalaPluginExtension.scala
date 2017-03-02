@@ -1,7 +1,7 @@
 package org.jetbrains.plugins.scala.components.extensions
 
-import org.jetbrains.plugins.scala.components.extensions.api.base.MigrationDescriptor
-import org.jetbrains.plugins.scala.components.extensions.api.{BaseApiProvider, InspectionConverter, ProjectMigrator, ArbitraryTreeTransformer}
+import org.jetbrains.plugins.scala.components.extensions.api.base._
+import org.jetbrains.plugins.scala.components.extensions.api._
 
 /**
   * @author mutcianm
@@ -16,6 +16,7 @@ abstract class ScalaPluginExtension (protected val api: BaseApiProvider) {
   /* Exported extensions */
   def inspections:  Seq[InspectionConverter] = Seq.empty
   def migrators(migrationDescriptor: MigrationDescriptor): Seq[ProjectMigrator] = Seq.empty
-  def transformers: Seq[ArbitraryTreeTransformer] = Seq.empty
+  def treeTransformers: Seq[ArbitraryTreeTransformer] = Seq.empty
+  def typeTransformers: Seq[ArbitraryTypeTransformer] = Seq.empty
   // TODO: other extensions
 }
