@@ -8,6 +8,7 @@ package types
 import com.intellij.lang.ASTNode
 import com.intellij.psi._
 import com.intellij.psi.scope.PsiScopeProcessor
+import org.jetbrains.plugins.scala.components.extensions.ScalaExtensionsManager
 import org.jetbrains.plugins.scala.lang.psi.api.ScalaElementVisitor
 import org.jetbrains.plugins.scala.lang.psi.api.base.types._
 import org.jetbrains.plugins.scala.lang.psi.api.statements.ScTypeAliasDefinition
@@ -144,9 +145,8 @@ class ScParameterizedTypeElementImpl(node: ASTNode) extends ScalaPsiElementImpl(
 
   //computes desugarized type either for existential type or one of kind projector types
   @Cached(synchronized = true, ModCount.getBlockModificationCount, this)
-  override def computeDesugarizedType: Option[ScTypeElement] = Option(desugarizedText) match {
-    case Some(text) => Option(createTypeElementFromText(text, getContext, this))
-    case _ => None
+  override def computeDesugarizedType: Option[ScTypeElement] = {
+    ScalaExtensionsManager.getInstance(getProject).transformElement(this)
   }
 
   override protected def innerType(ctx: TypingContext): TypeResult[ScType] = {
@@ -216,6 +216,9 @@ class ScParameterizedTypeElementImpl(node: ASTNode) extends ScalaPsiElementImpl(
                                    lastParent: PsiElement,
                                    place: PsiElement): Boolean = {
     if (ScalaPsiUtil.kindProjectorPluginEnabled(this)) {
+      ScalaExtensionsManager.getInstance(getProject).getAdditionalDeclarations(this).map {
+        case scala.meta.Defn.Class(_, name, _, _, _) => processor.execute(new ScSyntheticClass(name.value, Any), state)
+      }
       computeDesugarizedType match {
         case Some(projection: ScTypeProjection) =>
           projection.typeElement match {
