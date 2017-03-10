@@ -2,7 +2,7 @@ import sbt._
 import meta.Shared
 
 object Versions {
-  val scalaVersion = "2.11.8"
+  val scalaVersion = "2.12.1"
   val sbtVersion = "0.13.13"
   val ideaVersion = "171.3566.24"
   val sbtStructureVersion: String = Shared.sbtStructureVersion
@@ -27,7 +27,7 @@ object Dependencies {
   val scalaXml: ModuleID = "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
   val scalaParserCombinators: ModuleID = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4"
   // this actually needs the explicit version because something in packager breaks otherwise (???)
-  val sbtStructureCore: ModuleID = "org.jetbrains" % "sbt-structure-core_2.11" % sbtStructureVersion
+  val sbtStructureCore: ModuleID = "org.jetbrains" %% "sbt-structure-core" % sbtStructureVersion
   val evoInflector: ModuleID = "org.atteo" % "evo-inflector" % "1.2"
   val scalatestFindersPatched: ModuleID = "org.scalatest" % "scalatest-finders-patched" % "0.9.9"
 
@@ -36,10 +36,10 @@ object Dependencies {
   val commonsLang: ModuleID = "commons-lang" % "commons-lang" % "2.6"
   val junitInterface: ModuleID = "com.novocode" % "junit-interface" % "0.11" % "test"
 
-  val scalastyle_2_11: ModuleID = "org.scalastyle" % "scalastyle_2.11" % "0.8.0"
-  val scalariform_2_11: ModuleID = "org.scalariform" % "scalariform_2.11" % "0.1.7"
+  val scalastyle_2_11: ModuleID = "org.scalastyle" %% "scalastyle" % "0.9.0"
+  val scalariform_2_11: ModuleID = "org.scalariform" %% "scalariform" % "0.2.0"
   val macroParadise: ModuleID = "org.scalameta" % "paradise" % "3.0.0-M7" cross CrossVersion.full
-  val scalaMetaCore: ModuleID = "org.scalameta" % "scalameta_2.11" % "1.6.0" withSources()
+  val scalaMetaCore: ModuleID = "org.scalameta" %% "scalameta" % "1.6.0" withSources()
 
   val nailgun: ModuleID = "org.jetbrains" % "nailgun-patched" % "1.0.0"
   val compilerInterfaceSources: ModuleID = "org.jetbrains" % "compiler-interface-sources" % "1.0.0"
@@ -85,13 +85,13 @@ object DependencyGroups {
   )
 
   val scalaRunner = Seq(
-    "org.specs2" %% "specs2" % "2.3.11" % "provided" excludeAll ExclusionRule(organization = "org.ow2.asm")
+    "org.specs2" %% "specs2" % "2.4.17" % "provided" excludeAll ExclusionRule(organization = "org.ow2.asm")
   )
 
   val runners = Seq(
-    "org.specs2" %% "specs2" % "2.3.11" % "provided"  excludeAll ExclusionRule(organization = "org.ow2.asm"),
-    "org.scalatest" % "scalatest_2.11" % "2.2.1" % "provided",
-    "com.lihaoyi" %% "utest" % "0.3.1" % "provided"
+    "org.specs2" %% "specs2" % "2.4.17" % "provided"  excludeAll ExclusionRule(organization = "org.ow2.asm"),
+    "org.scalatest" %% "scalatest" % "3.0.1" % "provided",
+    "com.lihaoyi" %% "utest" % "0.4.5" % "provided"
   )
 
   val sbtLaunchTestDownloader: Seq[ModuleID] =
